@@ -15,6 +15,7 @@ import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import MapComponent from "./pages/map/map";
 import VerifyForm from "./pages/Verify/verify";
+import Subscribe from "./pages/Subscibe/subscribe";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,9 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/map" element={<MapComponent />} />
         <Route path="/verify" element={<VerifyForm />} />
+        <Route path="/subscribe" element={<Subscribe />} /> 
+
+
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
       </Routes>
       <Footer />
