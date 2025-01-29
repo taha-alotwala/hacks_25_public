@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuthContext } from '../../contexts/authContext';
+import gsap from 'gsap';
+
 const ProductList = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();
     const { token } = useAuthContext()
+
+    const cardsRef = useRef([]);
 
     const handleVendorClick = (e, vendorId) => {
         e.stopPropagation(); // Prevent modal from closing
@@ -14,6 +18,15 @@ const ProductList = () => {
     };
 
     useEffect(() => {
+        // Animate cards on mount
+        gsap.from(cardsRef.current, {
+            duration: 0.6,
+            y: 50,
+            opacity: 0,
+            stagger: 0.1,
+            ease: "power3.out"
+        });
+
         const fetchProducts = async () => {
             try {
                 const response = await axios.get('http://localhost:3000/api/v1/product-listings', {
@@ -29,54 +42,123 @@ const ProductList = () => {
         fetchProducts();
     }, []);
 
+    // Animation for modal
+    const modalAnimation = (show) => {
+        const modal = document.querySelector('.modal-content');
+        if (show) {
+            gsap.fromTo(modal, 
+                { scale: 0.8, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }
+            );
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8">Available Products</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {products.map((product) => (
+                <h2 className="text-5xl font-extrabold text-gray-900 mt-3 mb-4 text-center font-serif 
+                    bg-gradient-to-r from-green-600 to-green-500  text-transparent bg-clip-text">
+                    Fresh From The Farm
+                </h2>
+                <p className="text-center text-gray-600 mb-12 text-lg font-light">
+                    Discover nature's finest, delivered fresh to your doorstep
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+                    {products.map((product, index) => (
                         <div
+                            ref={el => cardsRef.current[index] = el}
                             key={product.vendor._id}
-                            onClick={() => setSelectedProduct(product)}
-                            className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden shadow-[0_0_15px_rgba(0,128,0,0.1)] 
-                                border border-green-100 hover:shadow-[0_0_25px_rgba(0,128,0,0.2)] transition-all duration-300 cursor-pointer group"
+                            onClick={() => {
+                                setSelectedProduct(product);
+                                modalAnimation(true);
+                            }}
+                            className="bg-gradient-to-b from-green-500 to-green-600 rounded-2xl overflow-hidden 
+                                shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-500 
+                                cursor-pointer border border-green-400/50 hover:border-green-300 group
+                                hover:shadow-[0_20px_50px_-12px_rgba(22,163,74,0.3)]
+                                relative before:absolute before:inset-0 before:bg-white/5 before:rounded-2xl
+                                before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500"
                         >
                             <div className="relative">
+                                <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-green-700/20 z-0"/>
                                 <img
                                     src={`http://localhost:3000/${product.image}`}
                                     alt={product.name}
-                                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                    className="w-full h-56 object-cover transform group-hover:scale-110 
+                                        transition-transform duration-700 relative z-10"
                                 />
+                                <div className="absolute inset-0 bg-gradient-to-t from-green-900/80 via-green-800/20 
+                                    to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20"/>
                                 {product.organic && (
-                                    <div className="absolute top-4 right-4 px-3 py-1 bg-green-500 text-white rounded-full text-sm font-medium">
-                                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                        </svg>
-
+                                    <div className="absolute top-4 right-4 px-4 py-2 bg-white/95 backdrop-blur text-green-600 
+                                        rounded-xl text-sm font-medium flex items-center gap-2 shadow-lg
+                                        transform -rotate-2 z-30 hover:rotate-0 transition-all duration-300
+                                        border border-green-100">
+                                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                        Organic
                                     </div>
                                 )}
+                                <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full 
+                                    group-hover:translate-y-0 transition-transform duration-500 z-30 flex justify-end">
+                                   
+                                </div>
                             </div>
 
-                            <div className="p-4">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
-                                    <span className="text-xl font-bold text-green-600">₹{product.price}</span>
+                            <div className="p-6 space-y-4 relative overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-b from-green-500/50 to-green-600/50 
+                                    opacity-0 group-hover:opacity-100 transition-opacity duration-500"/>
+                                <div className="relative z-10">
+                                    <div className="flex justify-between items-start">
+                                        <h3 className="text-xl font-bold text-white group-hover:text-green-50 
+                                            transition-colors duration-300 font-sans tracking-tight">{product.name}</h3>
+                                        <div className="flex flex-col items-end">
+                                            <span className="text-2xl font-bold text-white font-sans">₹{product.price}</span>
+                                            <span className="text-sm text-green-100/80">per kg</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-4 pt-4 border-t border-green-400/30">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-2">
+                                                <div className="w-8 h-8 bg-white/95 rounded-full flex items-center 
+                                                    justify-center ring-2 ring-green-400/30 group-hover:ring-green-300/50
+                                                    transition-all duration-300">
+                                                    <span className="text-green-600 font-semibold">
+                                                        {product.vendor.name.charAt(0)}
+                                                    </span>
+                                                </div>
+                                                <span className="text-sm font-medium text-white group-hover:text-green-50">
+                                                    {product.vendor.name}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center text-white/90 text-sm bg-white/10 
+                                                backdrop-blur-sm px-3 py-1 rounded-full border border-white/10
+                                                group-hover:bg-white/20 transition-colors duration-300">
+                                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                                <span>{new Date(product.harvest_date).toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p className="text-sm text-gray-600">by {product.vendor.name}</p>
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Modal */}
+            {/* Enhanced Modal */}
             {selectedProduct && (
                 <div
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
                     onClick={() => setSelectedProduct(null)}
                 >
                     <div
-                        className="bg-white/90 backdrop-blur-sm rounded-3xl w-[90%] max-w-md overflow-hidden shadow-[0_0_50px_rgba(0,128,0,0.1)] border border-green-100"
+                        className="modal-content bg-white/95 backdrop-blur-md rounded-2xl w-full max-w-lg 
+                            overflow-hidden shadow-2xl border border-white/20"
                         onClick={e => e.stopPropagation()}
                     >
                         <div className="relative">
