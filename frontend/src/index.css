@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+.map-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.filters input {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
 .flip-words-container {
     position: relative;
     height: 70px;
