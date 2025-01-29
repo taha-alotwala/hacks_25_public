@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import { HomeLayout } from "./pages/HomeLayout";
 import { Landing } from "./pages/Landing";
 import { Products } from "./pages/Products";
@@ -28,9 +28,13 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <Router> {/* Wrap the app in Router */}
+    <Router>
+      {" "}
+      {/* Wrap the app in Router */}
       <Navbar /> {/* Always render the Navbar */}
-      <Routes> {/* Define your routes */}
+      <Routes>
+        {" "}
+        {/* Define your routes */}
         <Route path="/" element={<Home />} /> {/* Home Page route */}
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
       </Routes>
