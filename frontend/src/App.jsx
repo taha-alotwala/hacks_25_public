@@ -1,14 +1,45 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import VendorSearchMap from "./pages/map/map";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { createBrowserRouter } from "react-router-dom";
+import { HomeLayout } from "./pages/HomeLayout";
+import { Landing } from "./pages/Landing";
+import { Products } from "./pages/Products";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import necessary components from react-router-dom
+import Navbar from "./Components/Navbar";
+import Footer from "./Components/Footer";
+import Home from "./Pages/Home/Index";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <HomeLayout />,
+    children: [
+      {
+        index: true,
+        element: <Landing />,
+      },
+      {
+        path: "/products",
+        element: <Products />,
+      },
+    ],
+  },
+]);
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
+      {" "}
+      {/* Wrap the app in Router */}
+      <Navbar /> {/* Always render the Navbar */}
       <Routes>
-        <Route path="/" element={<VendorSearchMap />} />
-        <Route path="/map" element={<VendorSearchMap />} />
+        {" "}
+        {/* Define your routes */}
+        <Route path="/" element={<Home />} /> {/* Home Page route */}
+        {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
       </Routes>
-    </BrowserRouter>
+      <Footer />
+    </Router>
   );
 }
 
