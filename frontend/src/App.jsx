@@ -4,6 +4,10 @@ import { createBrowserRouter, Route, RouterProvider } from "react-router-dom";
 import { HomeLayout } from "./pages/HomeLayout";
 import { Landing } from "./pages/Landing";
 import { Products } from "./pages/Products";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import necessary components from react-router-dom
+import Navbar from "./Components/Navbar";
+import Footer from "./Components/Footer";
+import Home from "./Pages/Home/Index";
 
 const router = createBrowserRouter([
   {
@@ -23,20 +27,15 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const fn = async () => {
-      const { data } = await axios.get("http://localhost:3000");
-      console.log(data);
-    };
-    fn();
-  });
-
   return (
-    <>
-      <RouterProvider router={router} />
-    </>
+    <Router> {/* Wrap the app in Router */}
+      <Navbar /> {/* Always render the Navbar */}
+      <Routes> {/* Define your routes */}
+        <Route path="/" element={<Home />} /> {/* Home Page route */}
+        {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
+      </Routes>
+      <Footer />
+    </Router>
   );
 }
 
