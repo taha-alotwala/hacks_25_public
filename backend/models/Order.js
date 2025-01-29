@@ -8,9 +8,16 @@ const orderSchema = new mongoose.Schema({
   },
   items: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      required: [true, "Please provide products"],
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: [true, "Please provide product ID"],
+      },
+      quantity: {
+        type: Number,
+        required: [true, "Please provide quantity"],
+        min: 1,
+      },
     },
   ],
   totalAmount: {

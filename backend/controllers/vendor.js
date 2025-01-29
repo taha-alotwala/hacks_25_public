@@ -12,7 +12,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   const { email, password, location } = req.body;
-  if (!email || !password || !location) {
+  if (!email || !password) {
     throw new BadRequestError("Please provide email and password");
   }
   const vendor = await Vendor.findOne({ email });

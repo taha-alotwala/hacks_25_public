@@ -24,6 +24,10 @@ const productSchema = new mongoose.Schema({
     ref: "Vendor",
     required: [true, "Please provide vendor"],
   },
+  image: {
+    type: String,
+    default: "uploads/placeholder.webp",
+  },
 });
 
 module.exports = mongoose.model("Product", productSchema);
