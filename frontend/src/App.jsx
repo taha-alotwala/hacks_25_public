@@ -11,8 +11,9 @@ import Home from "./pages/Home/Index";
 import Cart from "./pages/Payment/Cart";
 import ProductList from "./pages/Buyer/ProductList";
 import VendorProfile from "./pages/Buyer/VendorProfile";
-import Login from "./pages/Auth/Login"
-import SignUp from "./pages/Auth/SignUp"
+import Login from "./pages/Auth/Login";
+import SignUp from "./pages/Auth/SignUp";
+import MapComponent from "./pages/map/map";
 
 const router = createBrowserRouter([
   {
@@ -41,11 +42,12 @@ function App() {
         {" "}
         {/* Define your routes */}
         <Route path="/" element={<Home />} /> {/* Home Page route */}
-        <Route path="/cart" element={<Cart />}/>
-        <Route path="/product-list" element={<ProductList />}/>
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/product-list" element={<ProductList />} />
         <Route path="/vendor/:id" element={<VendorProfile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/map" element={<MapComponent />} />
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
       </Routes>
       <Footer />
