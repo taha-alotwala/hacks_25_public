@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import gsap from 'gsap';
 import axios from 'axios';
+import { useAuthContext } from '../../contexts/authContext';
 
 export default function Login() {
     const formRef = useRef(null);
@@ -11,6 +12,7 @@ export default function Login() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isUser, setIsUser] = useState(true);
+    const {token, setToken, name, setName} = useAuthContext();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,11 +26,23 @@ export default function Login() {
                 password 
             });
             
-            console.log("Login response:", response.data);
-
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-            localStorage.setItem('userType', isUser ? 'user' : 'vendor');
+            if (isUser) {
+                // Handle User Login
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                localStorage.setItem('userType', 'user');
+                setToken(response.data.token);
+                setName(response.data.user.name);
+                console.log("User logged in:", response.data.user.name);
+            } else {
+                // Handle Vendor Login
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.vendor));
+                localStorage.setItem('userType', 'vendor');
+                setToken(response.data.token);
+                setName(response.data.vendor.name);
+                console.log("Vendor logged in:", response.data.vendor.name);
+            }
 
             navigate('/');
         } catch (err) {
