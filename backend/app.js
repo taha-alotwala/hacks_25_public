@@ -7,8 +7,9 @@ const app = express();
 const connectDB = require("./db/connect");
 
 // routers
-const authRouter = require("./routes/auth");
+const authRouter = require("./routes/user");
 const jobsRouter = require("./routes/jobs");
+const vendorRouter = require("./routes/vendor");
 
 // error handler
 const notFoundMiddleware = require("./middleware/not-found");
@@ -39,6 +40,7 @@ app.get("/", (req, res) => {
   res.json({ msg: "Hello, user!" });
 });
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/vendor", vendorRouter);
 app.use("/api/v1/jobs", authMiddleware, jobsRouter);
 
 app.use(notFoundMiddleware);
@@ -49,7 +51,9 @@ const port = process.env.PORT || 3000;
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    app.listen(port, () => console.log(`Server is listening on port ${port}...`));
+    app.listen(port, () =>
+      console.log(`Server is listening on port ${port}...`)
+    );
   } catch (error) {
     console.log(error);
   }

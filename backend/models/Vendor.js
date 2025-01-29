@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const userSchema = new mongoose.Schema({
+const vendorSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please provide name"],
@@ -27,19 +27,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide location"],
   },
+  rating: {
+    type: Number,
+    default: 0,
+  },
 });
 
-userSchema.pre("save", async function () {
+vendorSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-userSchema.methods.comparePassword = async function (enteredPass) {
+vendorSchema.methods.comparePassword = async function (enteredPass) {
   return await bcrypt.compare(enteredPass, this.password);
 };
 
-userSchema.methods.createJWT = function () {
+vendorSchema.methods.createJWT = function () {
   return jwt.sign(
     { name: this.name, userId: this._id },
     process.env.JWT_SECRET,
@@ -49,4 +53,4 @@ userSchema.methods.createJWT = function () {
   );
 };
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Vendor", vendorSchema);
