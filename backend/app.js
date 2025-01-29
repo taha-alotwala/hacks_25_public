@@ -10,6 +10,7 @@ const connectDB = require("./db/connect");
 // routers
 const authRouter = require("./routes/user");
 const jobsRouter = require("./routes/jobs");
+const map = require("./routes/map");
 const vendorRouter = require("./routes/vendor");
 const productRouter = require("./routes/products");
 const orderRouter = require("./routes/orders");
@@ -51,6 +52,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/vendor", vendorRouter);
 app.use("/api/v1/jobs", authMiddleware, jobsRouter);
+app.use("/api/v1/map", map);
 app.use("/api/v1/products", authMiddleware, productRouter);
 app.use("/api/v1/orders", authMiddleware, orderRouter);
 app.use("/api/v1/product-listings", userProductsRouter);
