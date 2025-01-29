@@ -1,4 +1,81 @@
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+
 export default function PreBooking() {
+  const formRef = useRef(null);
+  const summaryRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Initial animation timeline
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+      // Animate the header section
+      tl.from("h1", {
+        y: -30,
+        opacity: 0,
+        duration: 0.8
+      })
+      .from("p.text-center", {
+        y: -20,
+        opacity: 0,
+        duration: 0.6
+      }, "-=0.4")
+      
+      // Animate the form card
+      .from(formRef.current, {
+        x: -50,
+        opacity: 0,
+        duration: 0.8,
+        clearProps: "all"
+      }, "-=0.4")
+
+      // Animate form elements
+      .from(".form-element", {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        clearProps: "all"
+      }, "-=0.4")
+
+      // Animate summary card
+      .from(summaryRef.current, {
+        x: 50,
+        opacity: 0,
+        duration: 0.8,
+        clearProps: "all"
+      }, "-=1.2")
+
+      // Animate summary items
+      .from(".summary-item", {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        clearProps: "all"
+      }, "-=0.4");
+
+      // Add hover animation for the confirm button
+      const confirmButton = summaryRef.current.querySelector('.confirm-button');
+      confirmButton.addEventListener('mouseenter', () => {
+        gsap.to(confirmButton, {
+          scale: 1.02,
+          duration: 0.2
+        });
+      });
+
+      confirmButton.addEventListener('mouseleave', () => {
+        gsap.to(confirmButton, {
+          scale: 1,
+          duration: 0.2
+        });
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 py-12">
       <div className="container mx-auto px-4">
@@ -12,7 +89,7 @@ export default function PreBooking() {
         <div className="grid grid-cols-12 gap-8">
           {/* Left Section - Form */}
           <div className="col-span-7">
-            <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-[0_0_15px_rgba(0,128,0,0.1)] hover:shadow-[0_0_20px_rgba(0,128,0,0.15)] transition-all duration-300">
+            <div ref={formRef} className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-[0_0_15px_rgba(0,128,0,0.1)] hover:shadow-[0_0_20px_rgba(0,128,0,0.15)] transition-all duration-300">
               <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -28,32 +105,32 @@ export default function PreBooking() {
                     <input 
                       type="text" 
                       placeholder="First Name" 
-                      className="w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
+                      className="form-element w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
                     />
                     <input 
                       type="text" 
                       placeholder="Last Name" 
-                      className="w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
+                      className="form-element w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
                     />
                   </div>
                   <input 
                     type="email" 
                     placeholder="Email Address" 
-                    className="w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
+                    className="form-element w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
                   />
                   <input 
                     type="tel" 
                     placeholder="Phone Number" 
-                    className="w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
+                    className="form-element w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700 placeholder-gray-400"
                   />
                   <div className="bg-green-50/50 p-4 rounded-xl space-y-2">
                     <h3 className="text-sm font-medium text-green-800">Preferred Delivery Time</h3>
                     <div className="grid grid-cols-2 gap-3">
                       <input 
                         type="date" 
-                        className="w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700"
+                        className="form-element w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700"
                       />
-                      <select className="w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700">
+                      <select className="form-element w-full p-3 bg-white border border-green-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20 transition-all duration-300 text-gray-700">
                         <option value="">Select Time Slot</option>
                         <option value="morning">Morning (8AM - 12PM)</option>
                         <option value="afternoon">Afternoon (12PM - 4PM)</option>
@@ -66,15 +143,15 @@ export default function PreBooking() {
                 <div className="bg-green-50/50 p-4 rounded-xl">
                   <h3 className="text-sm font-medium text-green-800 mb-3">Payment Method</h3>
                   <div className="grid grid-cols-3 gap-3">
-                    <button type="button" className="p-3 border border-green-200 rounded-xl hover:bg-green-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500/20">
+                    <button type="button" className="form-element p-3 border border-green-200 rounded-xl hover:bg-green-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500/20">
                       <img src="/upi-icon.svg" alt="UPI" className="h-6 w-6 mx-auto" />
                       <span className="text-sm text-gray-600 mt-1">UPI</span>
                     </button>
-                    <button type="button" className="p-3 border border-green-200 rounded-xl hover:bg-green-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500/20">
+                    <button type="button" className="form-element p-3 border border-green-200 rounded-xl hover:bg-green-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500/20">
                       <img src="/card-icon.svg" alt="Card" className="h-6 w-6 mx-auto" />
                       <span className="text-sm text-gray-600 mt-1">Card</span>
                     </button>
-                    <button type="button" className="p-3 border border-green-200 rounded-xl hover:bg-green-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500/20">
+                    <button type="button" className="form-element p-3 border border-green-200 rounded-xl hover:bg-green-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500/20">
                       <img src="/netbanking-icon.svg" alt="NetBanking" className="h-6 w-6 mx-auto" />
                       <span className="text-sm text-gray-600 mt-1">NetBanking</span>
                     </button>
@@ -85,13 +162,13 @@ export default function PreBooking() {
           </div>
 
           {/* Right Section - Booking Summary */}
-          <div className="col-span-5 space-y-6">
+          <div ref={summaryRef} className="col-span-5 space-y-6">
             <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-[0_0_15px_rgba(0,128,0,0.1)] hover:shadow-[0_0_20px_rgba(0,128,0,0.15)] transition-all duration-300">
               <h2 className="text-xl font-semibold text-gray-800 mb-6">Booking Summary</h2>
               <div className="space-y-4">
                 {/* Vegetable Items */}
                 <div className="space-y-3">
-                  <div className="p-4 bg-green-50/50 rounded-xl hover:bg-green-50 transition-all duration-300">
+                  <div className="summary-item p-4 bg-green-50/50 rounded-xl hover:bg-green-50 transition-all duration-300">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 bg-white rounded-lg overflow-hidden">
                         <img 
@@ -111,7 +188,7 @@ export default function PreBooking() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-green-50/50 rounded-xl hover:bg-green-50 transition-all duration-300">
+                  <div className="summary-item p-4 bg-green-50/50 rounded-xl hover:bg-green-50 transition-all duration-300">
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 bg-white rounded-lg overflow-hidden">
                         <img 
@@ -133,7 +210,7 @@ export default function PreBooking() {
                 </div>
 
                 {/* Price Summary */}
-                <div className="p-4 bg-green-50/50 rounded-xl">
+                <div className="summary-item p-4 bg-green-50/50 rounded-xl">
                   <div className="flex justify-between items-center text-gray-700">
                     <span>Total Order Value</span>
                     <span className="font-semibold">₹360.00</span>
@@ -172,7 +249,7 @@ export default function PreBooking() {
                   </ul>
                 </div>
 
-                <button className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2">
+                <button className="confirm-button w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2">
                   <span>Pay ₹36.00 to Confirm</span>
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
