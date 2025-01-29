@@ -3,7 +3,7 @@ const Product = require("../models/Product");
 
 const getAllProducts = async (req, res) => {
   const products = await Product.find({ vendor: req.user.userId });
-  res.json({ products });
+  res.json({ nHits: products?.length || 0, products });
 };
 
 const createProduct = async (req, res) => {

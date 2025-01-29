@@ -3,8 +3,8 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 
 const getAllOrders = async (req, res) => {
-  const orders = await Order.find({ purchased_by: req.user.userId });
-  res.json({ orders });
+  const orders = await Order.find({ purchasedBy: req.user.userId });
+  res.json({ nHits: orders?.length || 0, orders });
 };
 
 const getTotal = async (items) => {
