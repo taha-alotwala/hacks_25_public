@@ -14,6 +14,8 @@ export default function SignUp() {
     const [terms, setTerms] = useState(false);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [location, setLocation] = useState('');
+    const [isUser, setIsUser] = useState(true);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -70,17 +72,18 @@ export default function SignUp() {
         setIsLoading(true);
 
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/auth/register', {
+            const endpoint = isUser ? 'auth/register' : 'vendor/register';
+            const response = await axios.post(`http://localhost:3000/api/v1/${endpoint}`, {
                 name,
                 email,
-                password
+                password,
+                location
             });
 
-            // Store token in localStorage
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
-
-            // Redirect to home page or dashboard
+            localStorage.setItem('userType', isUser ? 'user' : 'vendor');
+            
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.msg || 'Something went wrong. Please try again.');
@@ -188,6 +191,36 @@ export default function SignUp() {
                                              focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20
                                              transition-all duration-300"
                                     placeholder="Enter your password"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Location Field */}
+                        <div className="form-element space-y-2">
+                            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                                Location
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    id="location"
+                                    name="location"
+                                    type="text"
+                                    value={location}
+                                    onChange={(e) => setLocation(e.target.value)}
+                                    required
+                                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-green-100 rounded-xl 
+                                             text-gray-900 placeholder-gray-400
+                                             focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20
+                                             transition-all duration-300"
+                                    placeholder="Enter your location"
                                 />
                             </div>
                         </div>

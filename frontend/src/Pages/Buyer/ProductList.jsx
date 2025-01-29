@@ -31,9 +31,9 @@ const ProductList = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-8">Available Products</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">Available Products</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {dummyProducts.map((product) => (
+                {dummyProducts.map((product) => (
                         <div 
                             key={product._id} 
                             onClick={() => setSelectedProduct(product)}
@@ -93,10 +93,10 @@ const ProductList = () => {
                             {selectedProduct.organic && (
                                 <div className="absolute top-4 left-4 px-3 py-1 bg-green-500 text-white rounded-full text-sm font-medium">
                                     Organic
-                                </div>
+                            </div>
                             )}
                         </div>
-
+                        
                         <div className="p-6 space-y-6">
                             <div className="flex justify-between items-start">
                                 <div>
@@ -151,7 +151,7 @@ const ProductList = () => {
                             </button>
                         </div>
                     </div>
-                </div>
+            </div>
             )}
         </div>
     );
