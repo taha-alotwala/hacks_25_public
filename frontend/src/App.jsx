@@ -5,14 +5,14 @@ import { HomeLayout } from "./pages/HomeLayout";
 import { Landing } from "./pages/Landing";
 import { Products } from "./pages/Products";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import necessary components from react-router-dom
-import Navbar from "./components/Navbar";
+import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
-import Home from "./Pages/Home/Index";
-import Cart from "./Pages/Payment/Cart";
-import ProductList from "./Pages/Buyer/ProductList";
-import VendorProfile from "./Pages/Buyer/VendorProfile";
-import Login from "./Pages/Auth/Login"
-import SignUp from "./Pages/Auth/SignUp"
+import Home from "./pages/Home/Index";
+import Cart from "./pages/Payment/Cart";
+import ProductList from "./pages/Buyer/ProductList";
+import VendorProfile from "./pages/Buyer/VendorProfile";
+import Login from "./pages/Auth/Login"
+import SignUp from "./pages/Auth/SignUp"
 
 const router = createBrowserRouter([
   {
