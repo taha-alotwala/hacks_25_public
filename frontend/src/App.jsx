@@ -7,7 +7,12 @@ import { Products } from "./pages/Products";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import necessary components from react-router-dom
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
-import Home from "./Pages/Home/Index";
+import Home from "./pages/Home/Index";
+import Cart from "./pages/Payment/Cart";
+import ProductList from "./pages/Buyer/ProductList";
+import VendorProfile from "./pages/Buyer/VendorProfile";
+import Login from "./pages/Auth/Login"
+import SignUp from "./pages/Auth/SignUp"
 
 const router = createBrowserRouter([
   {
@@ -36,6 +41,11 @@ function App() {
         {" "}
         {/* Define your routes */}
         <Route path="/" element={<Home />} /> {/* Home Page route */}
+        <Route path="/cart" element={<Cart />}/>
+        <Route path="/product-list" element={<ProductList />}/>
+        <Route path="/vendor/:id" element={<VendorProfile />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
       </Routes>
       <Footer />

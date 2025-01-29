@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import axios from 'axios';
 export default function Login() {
@@ -158,7 +158,7 @@ export default function Login() {
                                      onClick={handleLogin}
 
                         >
-                            Sign in
+                            Login
                         </button>
 
                         {/* Sign Up Link */}
