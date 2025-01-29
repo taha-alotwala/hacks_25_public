@@ -1,7 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Add these styles to your existing CSS */
+.rating-button {
+    transition: all 0.2s ease;
+}
 
+.rating-button:hover {
+    transform: scale(1.1);
+}
+
+.form-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 128, 0, 0.2);
+}
 .map-container {
     width: 100%;
     display: flex;

@@ -5,4 +5,8 @@ const getVendors = async (req, res) => {
   res.json({ nHits: vendors?.length || 0, vendors });
 };
 
-module.exports = { getVendors };
+const createReview = async (req, res) => {
+  res.json({ msg: "Hello", data: req.body });
+};
+
+module.exports = { getVendors, createReview };

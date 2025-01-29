@@ -15,6 +15,7 @@ import VendorProfile from "./pages/Buyer/VendorProfile";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import MapComponent from "./pages/map/map";
+import VerifyForm from "./pages/Verify/verify";
 import CreateProduct from "./pages/Seller/CreateProduct";
 
 const router = createBrowserRouter([
@@ -50,6 +51,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/map" element={<MapComponent />} />
+        <Route path="/verify" element={<VerifyForm />} />
         <Route path="/seller" element={<Seller />} />
         <Route path="/create-product" element={<CreateProduct />} />
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
