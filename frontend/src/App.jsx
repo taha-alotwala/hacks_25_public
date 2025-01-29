@@ -14,6 +14,8 @@ import VendorProfile from "./pages/Buyer/VendorProfile";
 import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import MapComponent from "./pages/map/map";
+import { useSocketContext } from "./contexts/SocketContext";
+import { toast } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -35,7 +37,6 @@ const router = createBrowserRouter([
 function App() {
   return (
     <Router>
-      {" "}
       {/* Wrap the app in Router */}
       <Navbar /> {/* Always render the Navbar */}
       <Routes>
