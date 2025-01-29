@@ -17,7 +17,7 @@ export default function SignUp() {
             })
             
             // Animate the form card
-            .from(".signup-card", {
+            tl.from(".signup-card", {
                 y: 40,
                 opacity: 0,
                 duration: 0.8,
@@ -25,7 +25,7 @@ export default function SignUp() {
             }, "-=0.4")
 
             // Animate form elements
-            .from(".form-element", {
+            tl.from(".form-element", {
                 y: 20,
                 opacity: 0,
                 duration: 0.5,
@@ -65,6 +65,32 @@ export default function SignUp() {
                 {/* SignUp Form Card */}
                 <div ref={formRef} className="signup-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-[0_0_50px_rgba(0,128,0,0.1)] border border-green-100 p-8">
                     <form className="space-y-6">
+                        {/* Name Field */}
+                        <div className="form-element space-y-2">
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                Full Name
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    autoComplete="name"
+                                    required
+                                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-green-100 rounded-xl 
+                                             text-gray-900 placeholder-gray-400
+                                             focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20
+                                             transition-all duration-300"
+                                    placeholder="Enter your full name"
+                                />
+                            </div>
+                        </div>
+
                         {/* Email Field */}
                         <div className="form-element space-y-2">
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -148,7 +174,7 @@ export default function SignUp() {
                         <div className="form-element text-center mt-4">
                             <p className="text-sm text-gray-600">
                                 Already have an account?{' '}
-                                <a href="#" className="font-medium text-green-600 hover:text-green-700 transition-colors duration-300">
+                                <a href="/login" className="font-medium text-green-600 hover:text-green-700 transition-colors duration-300">
                                     Sign in
                                 </a>
                             </p>
