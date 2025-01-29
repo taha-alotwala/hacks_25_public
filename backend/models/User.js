@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please provide password"],
     minlength: 6,
   },
+  location: {
+    type: String,
+    required: [true, "Please provide location"],
+  },
 });
 
 userSchema.pre("save", async function () {
@@ -36,9 +40,13 @@ userSchema.methods.comparePassword = async function (enteredPass) {
 };
 
 userSchema.methods.createJWT = function () {
-  return jwt.sign({ name: this.name, userId: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_LIFETIME,
-  });
+  return jwt.sign(
+    { name: this.name, userId: this._id },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_LIFETIME,
+    }
+  );
 };
 
 module.exports = mongoose.model("User", userSchema);
