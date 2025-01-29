@@ -1,21 +1,14 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import VendorSearchMap from "./pages/map/map";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const fn = async () => {
-      const { data } = await axios.get("http://localhost:3000");
-      console.log(data);
-    };
-    fn();
-  });
-
   return (
-    <>
-      <h1 className="font-bold text-xl">Hello, World</h1>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<VendorSearchMap />} />
+        <Route path="/map" element={<VendorSearchMap />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
