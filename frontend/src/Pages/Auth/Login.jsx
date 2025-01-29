@@ -1,18 +1,44 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import gsap from 'gsap';
 import axios from 'axios';
+
 export default function Login() {
     const formRef = useRef(null);
-    const [username, setUsername] = useState("");
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const handleLogin = async () => {
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [isUser, setIsUser] = useState(true);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
         try {
-            const response = await axios.post('http://localhost:3000/api/v1/auth/login', { username, password });
-            console.log(response.data);
-        } catch (error) {
-            console.error(error);
+            const endpoint = isUser ? 'auth/login' : 'vendor/login';
+            const response = await axios.post(`http://localhost:3000/api/v1/${endpoint}`, { 
+                email, 
+                password 
+            });
+            
+            console.log("Login response:", response.data);
+
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            localStorage.setItem('userType', isUser ? 'user' : 'vendor');
+
+            navigate('/');
+        } catch (err) {
+            console.error("Login error:", err);
+            setError(err.response?.data?.msg || 'Invalid credentials');
+        } finally {
+            setIsLoading(false);
         }
     };
+
     useEffect(() => {
         const ctx = gsap.context(() => {
             // Initial animation timeline
@@ -26,7 +52,7 @@ export default function Login() {
             })
             
             // Animate the form card
-            .from(".login-card", {
+            tl.from(".login-card", {
                 y: 40,
                 opacity: 0,
                 duration: 0.8,
@@ -34,7 +60,7 @@ export default function Login() {
             }, "-=0.4")
 
             // Animate form elements
-            .from(".form-element", {
+            tl.from(".form-element", {
                 y: 20,
                 opacity: 0,
                 duration: 0.5,
@@ -71,9 +97,43 @@ export default function Login() {
                     <p className="mt-2 text-gray-600">Welcome back! Please login to your account.</p>
                 </div>
 
+                {/* Toggle Switch */}
+                <div className="flex justify-center mb-8">
+                    <div className="bg-gray-400 rounded-xl p-1">
+                        <div className="flex">
+                            <button
+                                onClick={() => setIsUser(true)}
+                                className={`px-6 py-2 rounded-xl transition-all duration-300 ${
+                                    isUser 
+                                        ? 'bg-white text-green-600 shadow-sm' 
+                                        : 'text-gray-600 hover:text-gray-800'
+                                }`}
+                            >
+                                User
+                            </button>
+                            <button
+                                onClick={() => setIsUser(false)}
+                                className={`px-6 py-2 rounded-xl transition-all duration-300 ${
+                                    !isUser 
+                                        ? 'bg-white text-green-600 shadow-sm' 
+                                        : 'text-gray-600 hover:text-gray-800'
+                                }`}
+                            >
+                                Vendor
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Login Form Card */}
                 <div ref={formRef} className="login-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-[0_0_50px_rgba(0,128,0,0.1)] border border-green-100 p-8">
-                    <form className="space-y-6">
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
+                            {error}
+                        </div>
+                    )}
+                    
+                    <form onSubmit={handleLogin} className="space-y-6">
                         {/* Email Field */}
                         <div className="form-element space-y-2">
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -96,8 +156,8 @@ export default function Login() {
                                              focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20
                                              transition-all duration-300"
                                     placeholder="Enter your email"
-                                    value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -151,23 +211,26 @@ export default function Login() {
                         {/* Login Button */}
                         <button
                             type="submit"
-                            className="login-button w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm 
+                            disabled={isLoading}
+                            className={`login-button w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm 
                                      text-sm font-medium text-white bg-green-600 hover:bg-green-700 
                                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
-                                     transition-all duration-300 transform hover:-translate-y-0.5"
-                                     onClick={handleLogin}
-
+                                     transition-all duration-300 transform hover:-translate-y-0.5
+                                     ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
                         >
-                            Login
+                            {isLoading ? 'Logging in...' : 'Login'}
                         </button>
 
                         {/* Sign Up Link */}
                         <div className="form-element text-center mt-4">
                             <p className="text-sm text-gray-600">
                                 Don't have an account?{' '}
-                                <a href="#" className="font-medium text-green-600 hover:text-green-700 transition-colors duration-300">
-                                    Sign up
-                                </a>
+                                <Link 
+                                    to={`/signup?type=${isUser ? 'user' : 'vendor'}`} 
+                                    className="font-medium text-green-600 hover:text-green-700 transition-colors duration-300"
+                                >
+                                    Sign up as {isUser ? 'User' : 'Vendor'}
+                                </Link>
                             </p>
                         </div>
                     </form>

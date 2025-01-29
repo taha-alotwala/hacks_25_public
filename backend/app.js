@@ -49,6 +49,7 @@ app.use(express.static("./public"));
 app.get("/", (req, res) => {
   res.json({ msg: "Hello, user!" });
 });
+
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/vendor", vendorRouter);
 app.use("/api/v1/jobs", authMiddleware, jobsRouter);
