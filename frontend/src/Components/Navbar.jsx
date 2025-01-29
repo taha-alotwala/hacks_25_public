@@ -13,9 +13,6 @@ export default function Navbar() {
           <a href="/" className="text-gray-700 hover:text-gray-900 font-medium transition-all duration-300 hover:-translate-y-0.5">Home</a>    
           <a href="/about" className="text-gray-700 hover:text-gray-900 font-medium transition-all duration-300 hover:-translate-y-0.5">About</a>
           <a href="/contact" className="text-gray-700 hover:text-gray-900 font-medium transition-all duration-300 hover:-translate-y-0.5">Contact</a>
-          <a href="/business" className="text-gray-700 hover:text-gray-900 font-medium transition-all duration-300 hover:-translate-y-0.5">Business Buyers</a>
-          <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium px-4 py-1.5 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">Login</button>
-          <button className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium px-4 py-1.5 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">Signup</button>
           <button className="relative group">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" 
               className="w-7 h-7 text-gray-700 hover:text-gray-900 transition-all duration-300 hover:scale-110">

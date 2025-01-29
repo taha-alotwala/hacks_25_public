@@ -1,9 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
-
+import axios from 'axios';
 export default function Login() {
     const formRef = useRef(null);
-
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post('http://localhost:3000/api/v1/auth/login', { username, password });
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     useEffect(() => {
         const ctx = gsap.context(() => {
             // Initial animation timeline
@@ -87,6 +96,8 @@ export default function Login() {
                                              focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20
                                              transition-all duration-300"
                                     placeholder="Enter your email"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -113,6 +124,8 @@ export default function Login() {
                                              focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20
                                              transition-all duration-300"
                                     placeholder="Enter your password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -142,8 +155,10 @@ export default function Login() {
                                      text-sm font-medium text-white bg-green-600 hover:bg-green-700 
                                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
                                      transition-all duration-300 transform hover:-translate-y-0.5"
+                                     onClick={handleLogin}
+
                         >
-                            Sign in
+                            Login
                         </button>
 
                         {/* Sign Up Link */}
