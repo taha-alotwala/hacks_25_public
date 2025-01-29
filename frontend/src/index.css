@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.flip-words-container {
+    position: relative;
+    height: 70px;
+    perspective: 1000px;
+}
+
+.flip-word {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transform-origin: 50% 100%;
+    transform: rotateX(180deg);
+    animation: flipIn 8s linear infinite;
+    animation-delay: calc(var(--index) * 2s);
+    backface-visibility: hidden;
+}
+
+@keyframes flipIn {
+    0%, 5% {
+        transform: rotateX(180deg);
+        opacity: 0;
+    }
+    10%, 25% {
+        transform: rotateX(0deg);
+        opacity: 1;
+    }
+    30%, 35% {
+        transform: rotateX(-180deg);
+        opacity: 0;
+    }
+    100% {
+        transform: rotateX(-180deg);
+        opacity: 0;
+    }
+}
+
+/* Optional: Add these smooth transitions for better effect */
+.flip-word span {
+    display: block;
+    padding: 0.2em 0;
+    transform-origin: 50% 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease-out;
+}
+
+.flip-word span:hover {
+    transform: scale(1.05);
+}
