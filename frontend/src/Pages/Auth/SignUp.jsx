@@ -100,14 +100,15 @@ export default function SignUp() {
 
                 {/* SignUp Form Card */}
                 <div ref={formRef} className="signup-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-[0_0_50px_rgba(0,128,0,0.1)] border border-green-100 p-8">
-                    {error && (
+                    
+                    
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Name Field */}
+                        {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm">
                             {error}
                         </div>
                     )}
-                    
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Name Field */}
                         <div className="form-element space-y-2">
                             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                                 Full Name
