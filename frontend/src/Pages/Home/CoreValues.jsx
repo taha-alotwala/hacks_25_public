@@ -1,12 +1,75 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const CoreValues = () => {
+    const sectionRef = useRef(null);
+    const imageRef = useRef(null);
+    const contentRef = useRef(null);
+    const cardsRef = useRef([]);
+
+    useEffect(() => {
+        // Initial setup
+        gsap.set(imageRef.current, { x: -100, opacity: 0 });
+        gsap.set(contentRef.current, { x: 100, opacity: 0 });
+        gsap.set(cardsRef.current, { y: 50, opacity: 0 });
+
+        // Create main timeline
+        const tl = gsap.timeline({
+            scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top center",
+                end: "center center",
+                toggleActions: "play none none reverse"
+            }
+        });
+
+        // Add animations to timeline
+        tl.to(imageRef.current, {
+            x: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "power3.out"
+        })
+        .to(contentRef.current, {
+            x: 0,
+            opacity: 1,
+            duration: 1,
+            ease: "power3.out"
+        }, "-=0.5")
+        .to(cardsRef.current, {
+            y: 0,
+            opacity: 1,
+            stagger: 0.2,
+            duration: 0.8,
+            ease: "back.out(1.7)"
+        }, "-=0.5");
+
+        // Cleanup
+        return () => {
+            tl.kill();
+        };
+    }, []);
+
+    // Hover animation for cards
+    const handleCardHover = (index, isEnter) => {
+        gsap.to(cardsRef.current[index], {
+            scale: isEnter ? 1.05 : 1,
+            y: isEnter ? -5 : 0,
+            boxShadow: isEnter ? "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" : "none",
+            duration: 0.3,
+            ease: "power2.out"
+        });
+    };
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-12">
+        <div ref={sectionRef} className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 p-12">
             <div className="container mx-auto bg-white/80 backdrop-blur-sm rounded-3xl shadow-[0_0_50px_rgba(0,128,0,0.1)] overflow-hidden border border-green-100">
-                <div className="flex flex-row items-center justify-between p-12 gap-12">
+                <div className="flex flex-row justify-between p-12 gap-12">
                     {/* Left Section - Image with Overlay Text */}
-                    <div className="relative w-1/2 h-[500px] rounded-2xl overflow-hidden">
+                    <div ref={imageRef} className="relative w-1/2 h-[500px] rounded-2xl overflow-hidden">
                         <img 
                             src="https://go4fresh.com/assets/images/integrated.jpg" 
                             alt="" 
@@ -20,8 +83,8 @@ const CoreValues = () => {
                     </div>
 
                     {/* Right Section - Text Content */}
-                    <div className="w-1/2 space-y-10">
-                        <div className="space-y-6">
+                    <div ref={contentRef} className="w-1/2 space-y-1">
+                        <div >
                             <h2 className="text-4xl font-bold text-gray-800 leading-tight">
                                 The Future of Food is Fast,
                                 <br />
@@ -39,7 +102,12 @@ const CoreValues = () => {
                             <h3 className="text-xl font-semibold text-green-800 mb-8">Our Core Values</h3>
                             <div className="grid grid-cols-2 gap-6" data-aos="fade-up" data-aos-delay="300">
                                 {/* Adopt */}
-                                <div className="group p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,128,0,0.1)]">
+                                <div
+                                    ref={el => cardsRef.current[0] = el}
+                                    onMouseEnter={() => handleCardHover(0, true)}
+                                    onMouseLeave={() => handleCardHover(0, false)}
+                                    className="group p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,128,0,0.1)]"
+                                >
                                     <div className="flex flex-col gap-4">
                                         <span className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +124,12 @@ const CoreValues = () => {
                                 </div>
 
                                 {/* Deliver */}
-                                <div className="group p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,128,0,0.1)]">
+                                <div
+                                    ref={el => cardsRef.current[1] = el}
+                                    onMouseEnter={() => handleCardHover(1, true)}
+                                    onMouseLeave={() => handleCardHover(1, false)}
+                                    className="group p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,128,0,0.1)]"
+                                >
                                     <div className="flex flex-col gap-4">
                                         <span className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,7 +146,12 @@ const CoreValues = () => {
                                 </div>
 
                                 {/* Promote */}
-                                <div className="group p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,128,0,0.1)]">
+                                <div
+                                    ref={el => cardsRef.current[2] = el}
+                                    onMouseEnter={() => handleCardHover(2, true)}
+                                    onMouseLeave={() => handleCardHover(2, false)}
+                                    className="group p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,128,0,0.1)]"
+                                >
                                     <div className="flex flex-col gap-4">
                                         <span className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,7 +168,12 @@ const CoreValues = () => {
                                 </div>
 
                                 {/* Strengthen */}
-                                <div className="group p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,128,0,0.1)]">
+                                <div
+                                    ref={el => cardsRef.current[3] = el}
+                                    onMouseEnter={() => handleCardHover(3, true)}
+                                    onMouseLeave={() => handleCardHover(3, false)}
+                                    className="group p-5 bg-white/60 rounded-xl hover:bg-white/80 transition-all duration-300 hover:shadow-[0_0_15px_rgba(0,128,0,0.1)]"
+                                >
                                     <div className="flex flex-col gap-4">
                                         <span className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
