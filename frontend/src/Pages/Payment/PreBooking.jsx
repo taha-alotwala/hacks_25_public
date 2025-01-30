@@ -172,15 +172,15 @@ export default function PreBooking() {
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 bg-white rounded-lg overflow-hidden">
                         <img 
-                          src="/vegetables/tomato.jpg" 
+                          src="https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?cs=srgb&dl=pexels-julia-nagy-568948-1327838.jpg&fm=jpg" 
                           alt="Tomato" 
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-1">
                         <h3 className="font-medium text-gray-800">Fresh Tomatoes</h3>
-                        <p className="text-sm text-gray-600">Quantity: 2kg</p>
-                        <p className="text-sm font-medium text-green-600">₹80.00/kg</p>
+                        <p className="text-sm text-gray-600">Quantity: 4kg</p>
+                        <p className="text-sm font-medium text-green-600">₹40.00/kg</p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-gray-800">₹160.00</p>
@@ -192,7 +192,7 @@ export default function PreBooking() {
                     <div className="flex items-center gap-4">
                       <div className="w-16 h-16 bg-white rounded-lg overflow-hidden">
                         <img 
-                          src="/vegetables/potato.jpg" 
+                          src="https://hips.hearstapps.com/hmg-prod/images/roasted-potatoes-index-66b12d409240c.jpg?crop=0.6669219966807098xw:1xh;center,top&resize=1200:*" 
                           alt="Potato" 
                           className="w-full h-full object-cover"
                         />
