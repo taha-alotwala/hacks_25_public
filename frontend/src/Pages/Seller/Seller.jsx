@@ -1,6 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Link, useNavigate } from 'react-router-dom';
+import PageTransition from '../../components/PageTransition';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,6 +12,8 @@ export default function Seller() {
     const benefitsRef = useRef(null);
     const timelineRef = useRef(null);
     const stepsRef = useRef([]);
+    const navigate = useNavigate();
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
     useEffect(() => {
         // Reset refs array
@@ -168,8 +172,19 @@ export default function Seller() {
         }
     };
 
+    const handleDashboardClick = (e) => {
+        e.preventDefault();
+        setIsTransitioning(true);
+    };
+
     return (
         <div className="relative w-full">
+            {isTransitioning && (
+                <PageTransition 
+                    onComplete={() => navigate('/vendor-dashboard')} 
+                />
+            )}
+            
             {/* Background Image Wrapper */}
             <div className="relative w-full bg-gradient-to-br from-green-50 via-white to-green-50">
                 {/* Hero Section */}
@@ -182,12 +197,23 @@ export default function Seller() {
                     
                     <div className="absolute inset-0 bg-gradient-to-b from-green-900/50 to-green-900/70">
                         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
-                            <h1 className="text-4xl md:text-5xl font-bold text-white text-center mb-6 max-w-3xl">
-                                Seller
-                            </h1>
-                            <p className="text-lg md:text-xl text-white/90 text-center max-w-2xl leading-relaxed">
-                                Trusted platform offering higher savings, supply predictability & traceability for all your fresh produce needs.
-                            </p>
+                            <div className="flex flex-col items-center gap-6">
+                                <h1 className="text-4xl md:text-5xl font-bold text-white text-center mb-2">
+                                    Seller
+                                </h1>
+                                <button
+                                    onClick={handleDashboardClick}
+                                    className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
+                                >
+                                    <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    </svg>
+                                    View Dashboard
+                                </button>
+                                <p className="text-lg md:text-xl text-white/90 text-center max-w-2xl leading-relaxed">
+                                    Trusted platform offering higher savings, supply predictability & traceability for all your fresh produce needs.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -232,19 +258,6 @@ export default function Seller() {
                                     </p>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Registration Button */}
-                        <div className="text-center mt-12">
-                            <a 
-                                href="https://go4fresh-5jlli0.flutterflow.app" 
-                                className="inline-flex items-center px-8 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors duration-300"
-                            >
-                                Seller Registration
-                                <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                            </a>
                         </div>
                     </div>
                 </section>

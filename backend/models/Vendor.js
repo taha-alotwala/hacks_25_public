@@ -24,8 +24,16 @@ const vendorSchema = new mongoose.Schema({
     minlength: 6,
   },
   location: {
-    type: String,
-    required: [true, "Please provide location"],
+    latitude: {
+      type: Number,
+      required: [true, "Please provide latitude"],
+      default: 19.076, // Default latitude for Mumbai
+    },
+    longitude: {
+      type: Number,
+      required: [true, "Please provide longitude"],
+      default: 72.8777, // Default longitude for Mumbai
+    },
   },
   rating: {
     type: Number,
