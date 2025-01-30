@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import gsap from 'gsap';
 import { useAuthContext } from '../../contexts/authContext';
+import { FaLocationArrow, FaSpinner } from 'react-icons/fa';
 
 export default function SignUp() {
     const formRef = useRef(null);
@@ -16,7 +17,12 @@ export default function SignUp() {
     const [terms, setTerms] = useState(false);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [location, setLocation] = useState('');
+    const [location, setLocation] = useState({
+        coordinates: null,
+        loading: false,
+        error: null,
+        displayAddress: ''
+    });
     const [isUser, setIsUser] = useState(true);
 
     useEffect(() => {
@@ -68,18 +74,83 @@ export default function SignUp() {
         return () => ctx.revert();
     }, []);
 
+    // Function to get coordinates and reverse geocode
+    const getLocation = () => {
+        setLocation(prev => ({ ...prev, loading: true, error: null }));
+
+        if (!navigator.geolocation) {
+            setLocation(prev => ({
+                ...prev,
+                loading: false,
+                error: 'Geolocation is not supported by your browser'
+            }));
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
+                    // Simple coordinates object
+                    const coords = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    };
+
+                    // Reverse geocode using Nominatim OpenStreetMap service
+                    const response = await axios.get(
+                        `https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json`
+                    );
+
+                    setLocation({
+                        coordinates: coords, // Store simple coordinates object
+                        loading: false,
+                        error: null,
+                        displayAddress: response.data.display_name
+                    });
+                } catch (error) {
+                    setLocation(prev => ({
+                        ...prev,
+                        loading: false,
+                        error: 'Failed to get location details',
+                        coordinates: {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        }
+                    }));
+                }
+            },
+            (error) => {
+                setLocation(prev => ({
+                    ...prev,
+                    loading: false,
+                    error: 'Failed to get your location. Please ensure location permissions are enabled.'
+                }));
+            }
+        );
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setIsLoading(true);
 
+        if (!location.coordinates) {
+            setError('Please allow location access to continue');
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const endpoint = isUser ? 'auth/register' : 'vendor/register';
+            
+            // Convert location coordinates to string
+            const locationString = JSON.stringify(location.coordinates);
+            
             const response = await axios.post(`http://localhost:3000/api/v1/${endpoint}`, {
                 name,
                 email,
                 password,
-                location
+                location: locationString // Send stringified coordinates
             });
 
             localStorage.setItem('token', response.data.token);
@@ -243,18 +314,43 @@ export default function SignUp() {
                                 </div>
                                 <input
                                     id="location"
-                                    name="location"
                                     type="text"
-                                    value={location}
-                                    onChange={(e) => setLocation(e.target.value)}
-                                    required
-                                    className="appearance-none block w-full pl-10 pr-3 py-3 border border-green-100 rounded-xl 
+                                    value={location.displayAddress}
+                                    readOnly
+                                    className="appearance-none block w-full pl-10 pr-20 py-3 border border-green-100 rounded-xl 
                                              text-gray-900 placeholder-gray-400
                                              focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/20
                                              transition-all duration-300"
-                                    placeholder="Enter your location"
+                                    placeholder="Click to get location"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={getLocation}
+                                    disabled={location.loading}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-green-500 text-white rounded-lg 
+                                             hover:bg-green-600 transition-colors duration-200 flex items-center gap-2"
+                                >
+                                    {location.loading ? (
+                                        <>
+                                            <FaSpinner className="animate-spin" />
+                                            Getting location...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FaLocationArrow />
+                                            Get Location
+                                        </>
+                                    )}
+                                </button>
                             </div>
+                            {location.error && (
+                                <p className="mt-1 text-sm text-red-500">{location.error}</p>
+                            )}
+                            {location.coordinates && !location.error && (
+                                <p className="mt-1 text-sm text-green-600">
+                                    Location successfully captured!
+                                </p>
+                            )}
                         </div>
 
                         {/* Terms Checkbox */}
