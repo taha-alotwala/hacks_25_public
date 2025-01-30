@@ -1,4 +1,5 @@
 const Vendor = require("../models/Vendor");
+const Review = require("../models/Review");
 
 const getVendors = async (req, res) => {
   const vendors = await Vendor.find({});
@@ -6,7 +7,14 @@ const getVendors = async (req, res) => {
 };
 
 const createReview = async (req, res) => {
-  res.json({ msg: "Hello", data: req.body });
+  const review = await Review.create(req.body);
+  res.json({ review });
 };
 
-module.exports = { getVendors, createReview };
+const getReviewsForVendor = async (req, res) => {
+  const vendor = req.params.id;
+  const reviews = await Review.find({ vendor });
+  res.json({ reviews });
+};
+
+module.exports = { getVendors, createReview, getReviewsForVendor };

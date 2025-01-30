@@ -9,7 +9,7 @@ import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./pages/Home/Index";
 import Cart from "./pages/Payment/Cart";
-import Prebooking from "./pages/Payment/Cart";
+import Prebooking from "./pages/Payment/PreBooking";
 import Seller from "./pages/Seller/Seller";
 import ProductList from "./pages/Buyer/ProductList";
 import VendorProfile from "./pages/Buyer/VendorProfile";
@@ -63,9 +63,7 @@ function App() {
         <Route path="/vendor-dashboard" element={<VendorDashboard />} />
         <Route path="/prebooking" element={<Prebooking />} />
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
-        
-        <Route path="/update-dashboard" element={<UpdateDashboard/>}/>
-        
+        <Route path="/update-dashboard" element={<UpdateDashboard />} />
       </Routes>
       <Footer />
     </Router>
