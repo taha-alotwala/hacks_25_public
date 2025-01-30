@@ -20,7 +20,7 @@ const customIcon = new L.Icon({
 
 const LeafletMap = () => {
   const [location, setLocation] = useState(null);
-  const [users, setUsers] = useState([]);
+  const [vendors, setVendors] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(true);
   const { token } = useAuthContext();
@@ -46,14 +46,14 @@ const LeafletMap = () => {
     }
   }, []);
 
-  // Fetch users (or vendors) from the backend API
+  // Fetch vendors from the backend API
   useEffect(() => {
     if (location?.latitude && location?.longitude) {
-      fetchUsers(location.latitude, location.longitude);
+      fetchVendors(location.latitude, location.longitude);
     }
   }, [location]);
 
-  const fetchUsers = async (latitude, longitude) => {
+  const fetchVendors = async (latitude, longitude) => {
     try {
       // Replace with your actual API endpoint
       const { data } = await axios.get(
@@ -64,11 +64,10 @@ const LeafletMap = () => {
           },
         }
       );
-      // const data = await response.json();
-      setUsers(data.locations); // Assuming data is an array of users/vendors
+      setVendors(data.vendors); // Assuming data is an array of vendors
     } catch (error) {
       console.log(error);
-      setErrorMsg("Unable to fetch nearby users. Please try again.");
+      setErrorMsg("Unable to fetch nearby vendors. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -111,7 +110,7 @@ const LeafletMap = () => {
     <Box sx={{ width: "100vw", height: "100vh" }}>
       <MapContainer
         center={[location.latitude, location.longitude]}
-        zoom={15} // More zoomed-in for better detail
+        zoom={12} // More zoomed-in for better detail
         style={{ width: "100%", height: "100%" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -124,17 +123,28 @@ const LeafletMap = () => {
           <Popup>You are here</Popup>
         </Marker>
 
-        {/* Markers for users/vendors */}
-        {users.map((user, idx) => (
+        {/* Markers for vendors */}
+        {vendors.map((vendor) => (
           <Marker
-            key={idx} // Use a unique identifier for the key
-            position={[user.latitude, user.longitude]}
+            key={vendor._id} // Use the vendor's unique ID for the key
+            position={[vendor.location.latitude, vendor.location.longitude]}
             icon={customIcon}
           >
             <Popup>
-              <b>{user.name}</b>
+              <Typography variant="h6">{vendor.name}</Typography>
+              <Typography variant="body2">
+                Rating: {vendor.rating} / 5
+              </Typography>
+              <Typography variant="body2">Email: {vendor.email}</Typography>
               <br />
-              {/* Display other details about the user */}
+              <a
+                href={`mailto:${vendor.email}`}
+                style={{ textDecoration: "none" }}
+              >
+                <Typography variant="body2" color="primary">
+                  Contact Vendor
+                </Typography>
+              </a>
             </Popup>
           </Marker>
         ))}
