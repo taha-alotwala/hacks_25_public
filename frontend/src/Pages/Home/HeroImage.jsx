@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 const HeroImage = () => {
     const stats = [
         { number: "10K+", label: "Active Users", delay: "100" },
@@ -55,7 +55,7 @@ const HeroImage = () => {
                             <button className="relative overflow-hidden bg-green-500 text-white px-8 py-4 rounded-lg 
                                 font-medium transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20 
                                 hover:-translate-y-1 group/btn">
-                                <span className="relative z-10">Get Started Today</span>
+                                <Link to='/signup' className="relative z-10">Get Started Today</Link>
                                 <div className="absolute inset-0 bg-green-600 transform scale-x-0 group-hover/btn:scale-x-100 
                                     transition-transform duration-300 origin-left"></div>
                             </button>
