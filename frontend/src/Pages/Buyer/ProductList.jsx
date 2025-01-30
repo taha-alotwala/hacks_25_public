@@ -8,10 +8,14 @@ const ProductList = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [loading, setLoading] = useState(false);
     const [products, setProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [organicOnly, setOrganicOnly] = useState(false);
     const navigate = useNavigate();
     const { token } = useAuthContext()
 
     const cardsRef = useRef([]);
+    const searchRef = useRef(null);
 
     const handleVendorClick = (e, vendorId) => {
         e.stopPropagation(); // Prevent modal from closing
@@ -19,6 +23,14 @@ const ProductList = () => {
     };
 
     useEffect(() => {
+        // Animate search bar on mount
+        gsap.from(searchRef.current, {
+            duration: 0.8,
+            y: -20,
+            opacity: 0,
+            ease: "power3.out"
+        });
+
         // Animate cards on mount
         gsap.from(cardsRef.current, {
             duration: 0.6,
@@ -39,6 +51,7 @@ const ProductList = () => {
                 console.log(response.data.products);
                 
                 setProducts(response.data.products);
+                setFilteredProducts(response.data.products);
             } catch (err) {
                 console.error("Error fetching products:", err);
             } finally {
@@ -46,7 +59,18 @@ const ProductList = () => {
             }
         };
         fetchProducts();
-    }, []);
+    }, [token]);
+
+    // Handle search
+    useEffect(() => {
+        const filtered = products.filter(product => {
+            const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                product.vendor.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesOrganic = organicOnly ? product.organic : true;
+            return matchesSearch && matchesOrganic;
+        });
+        setFilteredProducts(filtered);
+    }, [searchTerm, products, organicOnly]);
 
     // Animation for modal
     const modalAnimation = (show) => {
@@ -74,8 +98,67 @@ const ProductList = () => {
                     Discover nature's finest, delivered fresh to your doorstep
                 </p>
                 
+                {/* Search Bar with Organic Filter */}
+                <div 
+                    ref={searchRef}
+                    className="max-w-3xl mx-auto mb-12 flex gap-4 items-center"
+                >
+                    {/* Search Input */}
+                    <div className="flex-1 relative group">
+                        <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl blur-md opacity-25 group-hover:opacity-40 transition-opacity duration-300"></div>
+                        <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl border border-green-100 shadow-[0_0_15px_rgba(0,128,0,0.1)] overflow-hidden">
+                            <input
+                                type="text"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search by product or vendor name..."
+                                className="w-full px-6 py-4 bg-transparent outline-none text-gray-700 placeholder-gray-400"
+                            />
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-gray-400">
+                                <span className="text-sm border-r border-gray-200 pr-2">
+                                    {filteredProducts.length} products
+                                </span>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Organic Toggle */}
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600 rounded-2xl blur-md opacity-25 group-hover:opacity-40 transition-opacity duration-300"></div>
+                        <button
+                            onClick={() => setOrganicOnly(!organicOnly)}
+                            className={`relative px-6 py-4 rounded-2xl border transition-all duration-300 flex items-center gap-2
+                                ${organicOnly 
+                                    ? 'bg-green-600 border-green-500 text-white shadow-lg shadow-green-600/20' 
+                                    : 'bg-white/80 backdrop-blur-sm border-green-100 text-gray-600 hover:bg-white/90'
+                                }`}
+                        >
+                            <svg 
+                                className={`w-5 h-5 transition-colors duration-300 ${organicOnly ? 'text-white' : 'text-green-600'}`} 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth="2" 
+                                    d="M5 13l4 4L19 7"
+                                />
+                            </svg>
+                            <span className="font-medium">Organic Only</span>
+                            <span className={`text-sm ml-1 ${organicOnly ? 'text-green-100' : 'text-gray-400'}`}>
+                                ({products.filter(p => p.organic).length})
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
-                    {products.map((product, index) => {
+                    {filteredProducts.map((product, index) => {
                         // console.log(product);
                         console.log(product.vendor.name);
                         return <div
@@ -174,7 +257,7 @@ const ProductList = () => {
                         onClick={e => e.stopPropagation()}
                     >
                         <div className="relative">
-                            <img
+                            <img 
                                 src={selectedProduct.image}
                                 alt={selectedProduct.name}
                                 className="w-full h-48 object-cover"
@@ -191,10 +274,10 @@ const ProductList = () => {
                             {selectedProduct.organic && (
                                 <div className="absolute top-4 left-4 px-3 py-1 bg-green-500 text-white rounded-full text-sm font-medium">
                                     Organic
-                                </div>
+                            </div>
                             )}
                         </div>
-
+                        
                         <div className="p-5 space-y-4">
                             <div className="flex justify-between items-start">
                                 <div>
@@ -239,7 +322,7 @@ const ProductList = () => {
                                                 </svg>
                                                 <span className="ml-1 text-sm font-medium text-gray-700">
                                                     {selectedProduct.vendor.rating?.toFixed(1) || 'New'}
-                                                </span>
+                                </span>
                                             </div>
                                         </div>
 
@@ -279,7 +362,7 @@ const ProductList = () => {
                             </button>
                         </div>
                     </div>
-                </div>
+            </div>
             )}
         </div>
     );
