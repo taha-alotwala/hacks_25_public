@@ -9,6 +9,7 @@ import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./pages/Home/Index";
 import Cart from "./pages/Payment/Cart";
+import Prebooking from "./pages/Payment/Cart";
 import Seller from "./pages/Seller/Seller";
 import ProductList from "./pages/Buyer/ProductList";
 import VendorProfile from "./pages/Buyer/VendorProfile";
@@ -21,6 +22,7 @@ import CreateProduct from "./pages/Seller/CreateProduct";
 import LeafletMap from "./pages/LeafletMap";
 import VendorDashboard from "./pages/Seller/VendorDashboard";
 
+import UpdateDashboard from "./pages/Seller/UpdateDashboard";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -59,7 +61,11 @@ function App() {
         <Route path="/create-product" element={<CreateProduct />} />
         <Route path="/leaflet-map" element={<LeafletMap />} />
         <Route path="/vendor-dashboard" element={<VendorDashboard />} />
+        <Route path="/prebooking" element={<Prebooking />} />
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
+        
+        <Route path="/update-dashboard" element={<UpdateDashboard/>}/>
+        
       </Routes>
       <Footer />
     </Router>
