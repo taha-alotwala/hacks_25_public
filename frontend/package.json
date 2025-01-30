@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "@changey/react-leaflet-markercluster": "^4.0.0-rc1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.2",
     "@react-google-maps/api": "^2.20.5",
+    "@react-leaflet/core": "^3.0.0",
     "axios": "^1.7.9",
     "frontend": "file:",
     "gsap": "^3.12.7",
