@@ -20,7 +20,8 @@ import Subscribe from "./pages/Subscibe/subscribe";
 import CreateProduct from "./pages/Seller/CreateProduct";
 import LeafletMap from "./pages/LeafletMap";
 import VendorDashboard from "./pages/Seller/VendorDashboard";
-
+import Prebooking from "./pages/Payment/Prebooking";
+import UpdateDashboard from "./pages/Seller/UpdateDashboard";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -60,6 +61,9 @@ function App() {
         <Route path="/leaflet-map" element={<LeafletMap />} />
         <Route path="/vendor-dashboard" element={<VendorDashboard />} />
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
+        <Route path="/prebooking" element={<Prebooking />}/>
+        <Route path="/update-dashboard" element={<UpdateDashboard/>}/>
+        
       </Routes>
       <Footer />
     </Router>
