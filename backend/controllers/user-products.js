@@ -8,11 +8,7 @@ const getProductListings = async (req, res) => {
 
 const getVendorLocations = async (req, res) => {
   const vendors = await Vendor.find({});
-  const locations = vendors.map((vendor) => ({
-    latitude: vendor.location.latitude,
-    longitude: vendor.location.longitude,
-  }));
-  res.json({ locations });
+  res.json({ vendors });
 };
 
 const getProductsForVendor = async (req, res) => {

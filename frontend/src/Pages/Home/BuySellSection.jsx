@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {Link} from 'react-router-dom';
 const supplyChain = [
     { id: 1, title: "Retailer", side: "buy" },
     { id: 2, title: "Distributor", side: "buy" },
@@ -22,9 +22,9 @@ const BuySellSection = () => {
                 <p className="text-gray-600 text-xl text-center max-w-md mb-8">
                     Quick order and delivery. Pay securely.
                 </p>
-                <button className="w-64 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <Link to='/login' className=" text-center w-64 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
                     Start Shopping
-                </button>
+                </Link>
 
                 {/* Supply Chain - Buy Side */}
                 <div className="flex flex-row justify-center gap-10 mt-16 relative w-full">
@@ -52,9 +52,9 @@ const BuySellSection = () => {
                 <p className="text-green-50 text-xl text-center max-w-md mb-8">
                     Easy to schedule and sell. Receive direct payments.
                 </p>
-                <button className="w-64 bg-white text-green-600 font-medium px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:bg-gray-50 hover:-translate-y-1">
+                <Link to='/signup' className="w-64 bg-white text-green-600 text-center font-medium px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:bg-gray-50 hover:-translate-y-1">
                     Start Selling
-                </button>
+                </Link>
 
                 {/* Supply Chain - Sell Side */}
                 <div className="flex flex-row justify-center gap-10 mt-16 relative w-full">

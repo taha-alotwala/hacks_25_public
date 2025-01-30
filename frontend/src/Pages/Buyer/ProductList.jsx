@@ -6,6 +6,7 @@ import gsap from 'gsap';
 
 const ProductList = () => {
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();
     const { token } = useAuthContext()
@@ -28,15 +29,20 @@ const ProductList = () => {
         });
 
         const fetchProducts = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get('http://localhost:3000/api/v1/product-listings', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
+                console.log(response.data.products);
+                
                 setProducts(response.data.products);
             } catch (err) {
                 console.error("Error fetching products:", err);
+            } finally {
+                setLoading(false);
             }
         };
         fetchProducts();
@@ -53,6 +59,10 @@ const ProductList = () => {
         }
     };
 
+    if(loading){
+        return <div>Loading...</div>
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,10 +75,12 @@ const ProductList = () => {
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
-                    {products.map((product, index) => (
-                        <div
+                    {products.map((product, index) => {
+                        // console.log(product);
+                        console.log(product.vendor.name);
+                        return <div
                             ref={el => cardsRef.current[index] = el}
-                            key={product.vendor._id}
+                            key={product._id}
                             onClick={() => {
                                 setSelectedProduct(product);
                                 modalAnimation(true);
@@ -146,7 +158,7 @@ const ProductList = () => {
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    })}
                 </div>
             </div>
 
@@ -239,7 +251,7 @@ const ProductList = () => {
                                                 </h3>
                                             </div>
 
-                                            <div className="grid grid-cols-2 gap-2 text-sm">
+                                            {/* <div className="grid grid-cols-2 gap-2 text-sm">
                                                 <div className="flex items-center text-gray-600">
                                                     <svg className="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -248,7 +260,7 @@ const ProductList = () => {
                                                     <span>{selectedProduct.vendor.location}</span>
                                                 </div>
                     
-                                            </div>
+                                            </div> */}
 
                                             <div className="flex items-center text-green-600 mt-2">
                                                 <span className="text-xs">View full profile</span>
