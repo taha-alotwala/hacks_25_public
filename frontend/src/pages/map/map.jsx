@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleMap, Marker, Circle, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
+import axios from 'axios';
+import { useAuthContext } from '../../contexts/authContext';
 
 const containerStyle = { width: '100%', height: '90vh' };
 const libraries = ['places', 'geometry'];
@@ -9,6 +11,7 @@ const MapComponent = () => {
     const googleMapRef = useRef(null);
     const markersRef = useRef([]);
     const currentLocationRef = useRef(null);
+    const { token } = useAuthContext();
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -16,9 +19,56 @@ const MapComponent = () => {
     });
 
     const [vendors, setVendors] = useState([]);
+    const [backendVendors, setBackendVendors] = useState([]);
     const [distance, setDistance] = useState(2);
     const [location, setLocation] = useState(null);
     const [selectedVendor, setSelectedVendor] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Fetch backend vendors
+    useEffect(() => {
+        const fetchBackendVendors = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/api/v1/product-listings', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                // Transform products to include vendor info and isBackendVendor flag
+                const vendorsWithProducts = response.data.products.map(product => ({
+                    id: product.vendor._id,
+                    name: product.vendor.name,
+                    location: {
+                        lat: parseFloat(product.vendor.location.split(',')[0]) || 19.0760, // Default Mumbai lat
+                        lng: parseFloat(product.vendor.location.split(',')[1]) || 72.8777  // Default Mumbai lng
+                    },
+                    address: product.vendor.location, // City name
+                    rating: product.vendor.rating,
+                    email: product.vendor.email,
+                    isBackendVendor: true,
+                    product: {
+                        id: product._id,
+                        name: product.name,
+                        price: product.price,
+                        organic: product.organic,
+                        image: product.image,
+                        harvest_date: new Date(product.harvest_date).toLocaleDateString()
+                    }
+                }));
+                
+                setBackendVendors(vendorsWithProducts);
+                setError(null);
+            } catch (error) {
+                console.error('Error fetching vendors:', error);
+                setError('Failed to load vendors');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchBackendVendors();
+    }, [token]);
 
     // Get user location
     useEffect(() => {
@@ -38,7 +88,7 @@ const MapComponent = () => {
         }
     }, []);
 
-    // Fetch nearby vendors
+    // Fetch Google vendors and update map
     useEffect(() => {
         if (!isLoaded || !location || !window.google || !mapRef.current) return;
 
@@ -62,38 +112,39 @@ const MapComponent = () => {
 
         service.nearbySearch(request, (results, status) => {
             if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                const formattedVendors = results.map(place => ({
+                const googleVendors = results.map(place => ({
                     id: place.place_id,
                     name: place.name,
                     location: place.geometry.location,
                     address: place.vicinity,
                     rating: place.rating || 'N/A',
+                    isGoogleVendor: true
                 }));
-                setVendors(formattedVendors);
+                setVendors(googleVendors);
 
-                // Add markers for each vendor
-                formattedVendors.forEach(vendor => {
+                // Add markers for both Google and backend vendors
+                [...googleVendors, ...backendVendors].forEach(vendor => {
+                    const position = vendor.isGoogleVendor ? 
+                        vendor.location : 
+                        new window.google.maps.LatLng(vendor.location.lat, vendor.location.lng);
+
                     const marker = new window.google.maps.Marker({
-                        position: vendor.location,
+                        position,
                         map: mapRef.current,
                         title: vendor.name,
-                        icon: selectedVendor?.id === vendor.id 
-                            ? "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-                            : undefined
+                        icon: getMarkerIcon(vendor.isBackendVendor)
                     });
 
                     marker.addListener("click", () => setSelectedVendor(vendor));
                     markersRef.current.push(marker);
                 });
-            } else {
-                console.error('Nearby search failed:', status);
             }
         });
-    }, [distance, location, isLoaded, selectedVendor]);
+    }, [distance, location, isLoaded, backendVendors]);
 
-    const getMarkerIcon = (isSelected) => ({
+    const getMarkerIcon = (isBackendVendor) => ({
         path: window.google?.maps?.SymbolPath?.CIRCLE,
-        fillColor: isSelected ? '#22c55e' : '#3b82f6',
+        fillColor: isBackendVendor ? '#22c55e' : '#f87171',  // Green for backend, Red for Google
         fillOpacity: 1,
         strokeWeight: 2,
         strokeColor: '#ffffff',
@@ -134,13 +185,10 @@ const MapComponent = () => {
                 {/* Map Container */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-[0_0_15px_rgba(0,128,0,0.1)] border border-green-100 overflow-hidden">
                     <GoogleMap
+                        ref={googleMapRef}
                         mapContainerStyle={containerStyle}
                         center={location}
-                        zoom={15}
-                        onLoad={map => {
-                            mapRef.current = map;
-                            googleMapRef.current = map;
-                        }}
+                        zoom={14}
                         options={{
                             styles: [
                                 {
@@ -148,83 +196,93 @@ const MapComponent = () => {
                                     elementType: "labels",
                                     stylers: [{ visibility: "off" }]
                                 }
-                            ]
+                            ],
+                            disableDefaultUI: true,
+                            zoomControl: true,
+                            mapTypeControl: true,
+                            streetViewControl: true,
+                        }}
+                        onLoad={map => {
+                            mapRef.current = map;
                         }}
                     >
+                        {/* Search Radius Circle */}
                         <Circle
                             center={location}
                             radius={distance * 1000}
                             options={{
-                                fillColor: "#4CAF50",
+                                fillColor: '#22c55e',
                                 fillOpacity: 0.1,
-                                strokeColor: "#4CAF50",
-                                strokeOpacity: 0.8,
+                                strokeColor: '#22c55e',
+                                strokeOpacity: 0.3,
                                 strokeWeight: 2,
                             }}
                         />
 
-                        <Marker
-                            position={location}
-                            icon="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-                        />
-
+                        {/* Info Window */}
                         {selectedVendor && (
                             <InfoWindow
-                                position={selectedVendor.location}
+                                position={selectedVendor.isGoogleVendor ? 
+                                    selectedVendor.location : 
+                                    { lat: selectedVendor.location.lat, lng: selectedVendor.location.lng }
+                                }
                                 onCloseClick={() => setSelectedVendor(null)}
                             >
-                                <div className="min-w-[300px] p-4 bg-white rounded-xl">
-                                    <div className="space-y-4">
-                                        <div className="flex items-start justify-between">
-                                            <div>
-                                                <h3 className="text-lg font-bold text-gray-800">{selectedVendor.name}</h3>
-                                                <p className="text-sm text-gray-600">{selectedVendor.address}</p>
-                                            </div>
-                                            <div className="flex items-center gap-1 px-2 py-1 bg-green-100 rounded-full">
-                                                <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                <div className="p-3 min-w-[250px]">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="font-semibold text-gray-900">{selectedVendor.name}</h3>
+                                        {selectedVendor.rating && (
+                                            <div className="flex items-center bg-green-50 px-2 py-1 rounded-full">
+                                                <svg className="w-4 h-4 text-yellow-400 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                 </svg>
-                                                <span className="text-sm font-medium text-green-700">
-                                                    {selectedVendor.rating}
-                                                </span>
+                                                <span className="text-sm font-medium text-green-800">{selectedVendor.rating}</span>
                                             </div>
-                                        </div>
-
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex items-center gap-2 text-gray-600">
-                                                <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                <span className="text-sm">Open Now</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-gray-600">
-                                                <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                                </svg>
-                                                <span className="text-sm">Local Vendor</span>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-2">
-                                            <a 
-                                                href={`https://www.google.com/maps/dir/?api=1&destination=${selectedVendor.location.lat()},${selectedVendor.location.lng()}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors duration-300"
-                                            >
-                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                                                </svg>
-                                                Get Directions
-                                            </a>
-                                            <button 
-                                                onClick={() => {/* Add view profile functionality */}}
-                                                className="px-4 py-2 border border-green-600 text-green-600 rounded-xl hover:bg-green-50 transition-colors duration-300"
-                                            >
-                                                View Profile
-                                            </button>
-                                        </div>
+                                        )}
                                     </div>
+                                    
+                                    <p className="text-sm text-gray-600 mb-3">{selectedVendor.address}</p>
+                                    
+                                    {selectedVendor.isBackendVendor && selectedVendor.product && (
+                                        <div className="bg-green-50 rounded-lg p-3">
+                                            <div className="flex items-start gap-3">
+                                                <img 
+                                                    src={`http://localhost:3000/${selectedVendor.product.image}`}
+                                                    alt={selectedVendor.product.name}
+                                                    className="w-16 h-16 object-cover rounded-lg"
+                                                />
+                                                <div className="flex-1">
+                                                    <p className="text-sm font-medium text-green-800 mb-1">
+                                                        {selectedVendor.product.name}
+                                                    </p>
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-lg font-semibold text-green-600">
+                                                            ₹{selectedVendor.product.price}
+                                                        </span>
+                                                        {selectedVendor.product.organic && (
+                                                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                                                                Organic
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-xs text-gray-500 mt-1">
+                                                        Harvest Date: {selectedVendor.product.harvest_date}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="mt-2 pt-2 border-t border-green-100">
+                                                <a 
+                                                    href={`mailto:${selectedVendor.email}`}
+                                                    className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                    </svg>
+                                                    Contact Vendor
+                                                </a>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </InfoWindow>
                         )}

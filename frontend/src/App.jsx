@@ -18,6 +18,7 @@ import MapComponent from "./pages/map/map";
 import VerifyForm from "./pages/Verify/verify";
 import Subscribe from "./pages/Subscibe/subscribe";
 import CreateProduct from "./pages/Seller/CreateProduct";
+import VendorDashboard from './pages/Seller/VendorDashboard';
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,7 @@ function App() {
 
         <Route path="/seller" element={<Seller />} />
         <Route path="/create-product" element={<CreateProduct />} />
+        <Route path="/vendor-dashboard" element={<VendorDashboard />} />
         {/* <Route path="/cart" element={<Cart />} /> Cart Page route */}
       </Routes>
       <Footer />
