@@ -1,76 +1,40 @@
 const express = require('express');
 const router = express.Router();
-const Vendor = require('../models/location');
+const Vendor = require('../models/map'); // Make sure this path is correct
 
 // Get vendors within radius
 router.get('/vendors', async (req, res) => {
-  try {
-    const {
-      farmName,
-      crop,
-      basket,
-      animalProduct,
-      distance = 5,
-      lat,
-      lng,
-      organic
-    } = req.query;
+    try {
+        const { lat, lng, distance = 5 } = req.query;
 
-    // Build query
-    const query = {
-      location: {
-        $near: {
-          $geometry: {
-            type: 'Point',
-            coordinates: [parseFloat(lng), parseFloat(lat)]
-          },
-          $maxDistance: parseInt(distance) * 1000 // Convert km to meters
+        if (!lat || !lng) {
+            return res.status(400).json({ 
+                error: 'Latitude and longitude are required' 
+            });
         }
-      }
-    };
 
-    if (farmName) {
-      query.name = new RegExp(farmName, 'i');
+        // Convert string parameters to numbers
+        const latitude = parseFloat(lat);
+        const longitude = parseFloat(lng);
+        const radius = parseFloat(distance);
+
+        const vendors = await Vendor.find({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [longitude, latitude] // Note: GeoJSON format is [lng, lat]
+                    },
+                    $maxDistance: radius * 1000 // Convert km to meters
+                }
+            }
+        }).limit(50);
+
+        res.json(vendors);
+    } catch (error) {
+        console.error('Error fetching vendors:', error);
+        res.status(500).json({ error: error.message });
     }
-
-    if (crop) {
-      query.crops = crop;
-    }
-
-    if (basket) {
-      query.foodBaskets = basket;
-    }
-
-    if (animalProduct) {
-      query.animalProducts = animalProduct;
-    }
-
-    if (organic === 'true') {
-      query.isOrganic = true;
-    }
-
-    const vendors = await Vendor.find(query)
-      .select('name location isOrganic rating')
-      .limit(100)
-      .lean(); // Convert to plain JavaScript objects
-
-    // Ensure we're sending an array
-    res.json(vendors || []);
-  } catch (error) {
-    console.error('Error fetching vendors:', error);
-    res.status(500).json({ message: 'Error fetching vendors' });
-  }
-});
-
-// Add new vendor
-router.post('/vendors', async (req, res) => {
-  try {
-    const vendor = new Vendor(req.body);
-    await vendor.save();
-    res.status(201).json(vendor);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
 });
 
 module.exports = router;
