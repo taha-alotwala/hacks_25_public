@@ -40,7 +40,6 @@ const router = createBrowserRouter([
 function App() {
   return (
     <Router>
-      {" "}
       {/* Wrap the app in Router */}
       <Navbar /> {/* Always render the Navbar */}
       <Routes>
@@ -54,9 +53,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/map" element={<MapComponent />} />
         <Route path="/verify" element={<VerifyForm />} />
-        <Route path="/subscribe" element={<Subscribe />} /> 
-
-
+        <Route path="/subscribe" element={<Subscribe />} />
         <Route path="/seller" element={<Seller />} />
         <Route path="/create-product" element={<CreateProduct />} />
         <Route path="/vendor-dashboard" element={<VendorDashboard />} />
