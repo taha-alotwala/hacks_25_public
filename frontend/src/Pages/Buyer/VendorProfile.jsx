@@ -96,7 +96,7 @@ const VendorProfile = () => {
                         <div
                             key={product._id}
                             className="bg-gradient-to-b from-green-500 to-green-600 rounded-2xl overflow-hidden 
-                                shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-500 
+                                shadow-lg transform hover:-translate-y-2 transition-all duration-500 
                                 cursor-pointer border border-green-400/50 hover:border-green-300 group
                                 hover:shadow-[0_20px_50px_-12px_rgba(22,163,74,0.3)]
                                 relative before:absolute before:inset-0 before:bg-white/5 before:rounded-2xl
