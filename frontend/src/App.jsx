@@ -9,7 +9,7 @@ import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import Home from "./pages/Home/Index";
 import Cart from "./pages/Payment/Cart";
-import Prebooking from "./pages/Payment/Cart";
+import Prebooking from "./pages/Payment/PreBooking";
 import Seller from "./pages/Seller/Seller";
 import ProductList from "./pages/Buyer/ProductList";
 import VendorProfile from "./pages/Buyer/VendorProfile";

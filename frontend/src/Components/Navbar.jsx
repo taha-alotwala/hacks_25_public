@@ -35,6 +35,7 @@ export default function Navbar() {
           <>
             
             <Link to="/map" className="text-gray-700 hover:text-gray-900 font-medium transition-all duration-300 hover:-translate-y-0.5">Find Vendors</Link>
+            <Link to="/leaflet-map" className="text-gray-700 hover:text-gray-900 font-medium transition-all duration-300 hover:-translate-y-0.5">Verified Vendors</Link>
             <Link to="/product-list" className="text-gray-700 hover:text-gray-900 font-medium transition-all duration-300 hover:-translate-y-0.5">Products</Link>
             <Link to='prebooking' element={<PreBooking/>} className="text-gray-700 hover:text-gray-900 font-medium transition-all duration-300 hover:-translate-y-0.5">Prebooking</Link>
           </>
