@@ -63,6 +63,7 @@ app.use("/api/v1/product-listings", authMiddleware, userProductsRouter);
 app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/subscription", authMiddleware, subscriptionRouter);
 app.use("/api/v1/suggestion", authMiddleware, suggestionRouter);
+app.use('/api/v1/suggestions', suggestionRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
